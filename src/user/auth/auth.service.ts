@@ -27,6 +27,7 @@ export class AuthService {
     });
 
     return {
+      message: 'User create sucess.',
       id: user.id,
       email: user.email,
     };
@@ -41,20 +42,15 @@ export class AuthService {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      data.password,
-      user.password,
-    );
+    const isPasswordValid = await bcrypt.compare(data.password, user.password);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    const token = jwt.sign(
-      { sub: user.id, email: user.email },
-      'SECRET_KEY',
-      { expiresIn: '1d' },
-    );
+    const token = jwt.sign({ sub: user.id, email: user.email }, 'SECRET_KEY', {
+      expiresIn: '1d',
+    });
 
     return {
       access_token: token,
